@@ -1,0 +1,81 @@
+﻿@model LogisticsSystem.Models.Course
+
+@{
+    ViewData["Title"] = "Create Course";
+    var users = ViewBag.Users as List<LogisticsSystem.Models.User>;
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @Html.ValidationSummary(true, "", new { @class = "mb-0" })
+    </div>
+}
+
+<h2>Create Course</h2>
+
+<form asp-action="CreateCourse" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    
+    <div class="form-group">
+        <label asp-for="ShipperId">Shipper</label>
+        <select asp-for="ShipperId" class="form-control" required>
+            <option value="">-- Select Shipper --</option>
+            @if (users != null)
+            {
+                foreach (var shipper in users.Where(u => u.Role == "Shipper"))
+                {
+                    <option value="@shipper.Id">@shipper.Name (@shipper.Id)</option>
+                }
+            }
+        </select>
+        <span asp-validation-for="ShipperId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DriverId">Driver</label>
+        <select asp-for="DriverId" class="form-control" required>
+            <option value="">-- Select Driver --</option>
+            @if (users != null)
+            {
+                foreach (var driver in users.Where(u => u.Role == "Driver"))
+                {
+                    <option value="@driver.Id">@driver.Name (@driver.Id)</option>
+                }
+            }
+        </select>
+        <span asp-validation-for="DriverId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StartingPoint"></label>
+        <input asp-for="StartingPoint" class="form-control" required />
+        <span asp-validation-for="StartingPoint" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Destination"></label>
+        <input asp-for="Destination" class="form-control" required />
+        <span asp-validation-for="Destination" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Document (PDF)</label>
+        <input type="file" name="Document" class="form-control" accept=".pdf" />
+    </div>
+
+    <div class="form-group mt-3">
+        <button type="submit" class="btn btn-primary">Create Course</button>
+        <a asp-action="ManageCourses" class="btn btn-secondary">Back to List</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

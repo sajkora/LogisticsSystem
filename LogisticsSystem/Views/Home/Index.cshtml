@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    @if (ViewBag.UserName != null && ViewBag.UserEmail != null && ViewBag.UserId != null)
+    {
+        <div class="alert alert-info text-start mt-3">
+            <strong>Logged in as:</strong><br />
+            Name: @ViewBag.UserName <br />
+            Email: @ViewBag.UserEmail <br />
+            Id: @ViewBag.UserId
+        </div>
+    }
+</div>

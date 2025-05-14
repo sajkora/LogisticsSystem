@@ -1,0 +1,96 @@
+@model LogisticsSystem.Models.AssignCourseViewModel
+
+@{
+    ViewData["Title"] = "Assign Course";
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (ViewBag.DebugMessage != null)
+{
+    <div class="alert alert-info">@ViewBag.DebugMessage</div>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-warning">
+        <strong>Validation failed:</strong>
+        <ul>
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <li>@error.ErrorMessage</li>
+        }
+        </ul>
+    </div>
+}
+
+@if (ViewBag.UserName != null && ViewBag.UserEmail != null && ViewBag.UserId != null)
+{
+    <div class="alert alert-info text-start mt-3">
+        <strong>Logged in as:</strong><br />
+        Name: @ViewBag.UserName <br />
+        Email: @ViewBag.UserEmail <br />
+        Id: @ViewBag.UserId
+    </div>
+}
+
+<h2>Assign Course</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="AssignCourse" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="DriverId" class="control-label">Driver</label>
+                <select asp-for="DriverId" class="form-control">
+                    <option value="">-- Select Driver --</option>
+                    @foreach (var driver in Model.Drivers)
+                    {
+                        <option value="@driver.Id">@driver.Name (@driver.Id)</option>
+                    }
+                </select>
+                <span asp-validation-for="DriverId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="StartingPoint" class="control-label"></label>
+                <input asp-for="StartingPoint" class="form-control" />
+                <span asp-validation-for="StartingPoint" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Destination" class="control-label"></label>
+                <input asp-for="Destination" class="form-control" />
+                <span asp-validation-for="Destination" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Document" class="control-label"></label>
+                <input type="file" asp-for="Document" class="form-control" accept=".pdf" />
+                <span asp-validation-for="Document" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="Assign Course" class="btn btn-primary" />
+                <a asp-action="MonitorCourses" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

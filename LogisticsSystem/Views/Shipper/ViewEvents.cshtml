@@ -1,0 +1,47 @@
+@model IEnumerable<LogisticsSystem.Models.CourseEvent>
+@{
+    var course = ViewBag.Course as LogisticsSystem.Models.Course;
+    var users = ViewBag.Users as List<LogisticsSystem.Models.User>;
+    string GetUserName(string id) => users?.FirstOrDefault(u => u.Id == id)?.Name ?? id;
+    ViewBag.Title = "Course Events";
+}
+
+<h2>Events for Course</h2>
+@if (course != null)
+{
+    <div class="mb-3">
+        <strong>Course:</strong> @course.StartingPoint → @course.Destination<br />
+        <strong>Driver:</strong> @GetUserName(course.DriverId) <small>(@course.DriverId)</small><br />
+        <strong>Description:</strong> @course.Description
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No events reported for this course.</div>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Event Type</th>
+                <th>Description</th>
+                <th>Driver</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var ev in Model)
+        {
+            <tr>
+                <td>@ev.EventType</td>
+                <td>@ev.Description</td>
+                <td>@GetUserName(ev.DriverId) <br /><small>@ev.DriverId</small></td>
+                <td>@ev.Timestamp.ToLocalTime().ToString("g")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+<a asp-action="MonitorCourses" class="btn btn-secondary">Back to Courses</a> 

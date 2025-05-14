@@ -1,0 +1,44 @@
+﻿@model LogisticsSystem.Models.EditUserViewModel
+
+
+<form asp-action="EditUser" method="post">
+
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" type="password" class="form-control" placeholder="Podaj nowe hasło, jeśli chcesz zmienić aktualne" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        @using Microsoft.AspNetCore.Mvc.Rendering
+        @{
+            var roleItems = new List<SelectListItem>
+        {
+        new SelectListItem { Text = "Admin", Value = "Admin", Selected = Model.Role == "Admin" },
+        new SelectListItem { Text = "Shipper", Value = "Shipper", Selected = Model.Role == "Shipper" },
+        new SelectListItem { Text = "Driver", Value = "Driver", Selected = Model.Role == "Driver" }
+        };
+        }
+        <label asp-for="Role"></label>
+        <select asp-for="Role" class="form-control" asp-items="roleItems">
+            <option value="">-- Wybierz rolę --</option>
+        </select>
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+</form>

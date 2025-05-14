@@ -1,0 +1,233 @@
+﻿@model (IEnumerable<LogisticsSystem.Models.Course> Ongoing, IEnumerable<LogisticsSystem.Models.Course> Completed)
+
+@{
+    ViewData["Title"] = "Monitor Courses";
+    var users = (List<LogisticsSystem.Models.User>)ViewBag.Users;
+    string GetUserName(string id) => users.FirstOrDefault(u => u.Id == id)?.Name ?? "Unknown";
+    var selectedInProgress = (string)ViewBag.FilterStatus == "In Progress" ? "selected" : "";
+    var selectedCompleted = (string)ViewBag.FilterStatus == "Completed" ? "selected" : "";
+    var filterShipper = (string)ViewBag.FilterShipper;
+    var filterDriver = (string)ViewBag.FilterDriver;
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<h2>Monitor Courses</h2>
+
+<p>
+    <a asp-action="AssignCourse" class="btn btn-primary">Assign New Course</a>
+    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">Filter</button>
+</p>
+
+<!-- Filter Modal -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="filterModalLabel">Filter Courses</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="get" asp-action="MonitorCourses" id="filterForm">
+        <div class="modal-body">
+          <div class="mb-2">
+            <label for="startingPoint">Starting Point</label>
+            <input type="text" class="form-control" id="startingPoint" name="startingPoint" value="@ViewBag.FilterStartingPoint" />
+          </div>
+          <div class="mb-2">
+            <label for="destination">Destination</label>
+            <input type="text" class="form-control" id="destination" name="destination" value="@ViewBag.FilterDestination" />
+          </div>
+          <div class="mb-2">
+            <label for="description">Description</label>
+            <input type="text" class="form-control" id="description" name="description" value="@ViewBag.FilterDescription" />
+          </div>
+          <div class="mb-2">
+            <label for="shipper">Shipper</label>
+            <select class="form-control" id="shipper" name="shipper">
+              <option value="">-- Any --</option>
+              @foreach (var user in users.Where(u => u.Role == "Shipper"))
+              {
+                  if (filterShipper == user.Id)
+                  {
+                      @:<option value="@user.Id" selected>@user.Name (@user.Id)</option>
+                  }
+                  else
+                  {
+                      @:<option value="@user.Id">@user.Name (@user.Id)</option>
+                  }
+              }
+            </select>
+          </div>
+          <div class="mb-2">
+            <label for="driver">Driver</label>
+            <select class="form-control" id="driver" name="driver">
+              <option value="">-- Any --</option>
+              @foreach (var user in users.Where(u => u.Role == "Driver"))
+              {
+                  if (filterDriver == user.Id)
+                  {
+                      @:<option value="@user.Id" selected>@user.Name (@user.Id)</option>
+                  }
+                  else
+                  {
+                      @:<option value="@user.Id">@user.Name (@user.Id)</option>
+                  }
+              }
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-outline-danger" id="clearFiltersBtn">Clear filters</button>
+          <button type="submit" class="btn btn-primary">Apply Filter</button>
+        </div>
+      </form>
+      <script>
+        document.getElementById('clearFiltersBtn').onclick = function() {
+          document.getElementById('startingPoint').value = '';
+          document.getElementById('destination').value = '';
+          document.getElementById('description').value = '';
+          document.getElementById('shipper').selectedIndex = 0;
+          document.getElementById('driver').selectedIndex = 0;
+          
+        };
+      </script>
+    </div>
+  </div>
+</div>
+
+<ul class="nav nav-tabs" id="courseTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="ongoing-tab" data-bs-toggle="tab" href="#ongoing" role="tab" aria-controls="ongoing" aria-selected="true">Ongoing</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="completed-tab" data-bs-toggle="tab" href="#completed" role="tab" aria-controls="completed" aria-selected="false">Completed</a>
+    </li>
+</ul>
+<div class="tab-content mt-3" id="courseTabsContent">
+    <div class="tab-pane fade show active" id="ongoing" role="tabpanel" aria-labelledby="ongoing-tab">
+        @if (!Model.Ongoing.Any())
+        {
+            <div class="alert alert-info">No ongoing courses.</div>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Starting Point</th>
+                        <th>Destination</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Shipper</th>
+                        <th>Driver</th>
+                        <th>Document</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Ongoing)
+                    {
+                        <tr>
+                            <td>@item.StartingPoint</td>
+                            <td>@item.Destination</td>
+                            <td>@item.Description</td>
+                            <td>@(item.IsCompleted ? "Completed" : "In Progress")</td>
+                            <td>
+                                @GetUserName(item.ShipperId) <br />
+                                <small>@item.ShipperId</small>
+                            </td>
+                            <td>
+                                @GetUserName(item.DriverId) <br />
+                                <small>@item.DriverId</small>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.DocumentFileName))
+                                {
+                                    <a asp-action="DownloadDocument" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                        <i class="fas fa-download"></i> Download PDF
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No document</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="EditCourse" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
+                                <a asp-action="DeleteCourse" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                                <a asp-action="ViewEvents" asp-route-courseId="@item.Id" class="btn btn-info btn-sm">View Events</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
+        @if (!Model.Completed.Any())
+        {
+            <div class="alert alert-info">No completed courses.</div>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Starting Point</th>
+                        <th>Destination</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Shipper</th>
+                        <th>Driver</th>
+                        <th>Document</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Completed)
+                    {
+                        <tr>
+                            <td>@item.StartingPoint</td>
+                            <td>@item.Destination</td>
+                            <td>@item.Description</td>
+                            <td>@(item.IsCompleted ? "Completed" : "In Progress")</td>
+                            <td>
+                                @GetUserName(item.ShipperId) <br />
+                                <small>@item.ShipperId</small>
+                            </td>
+                            <td>
+                                @GetUserName(item.DriverId) <br />
+                                <small>@item.DriverId</small>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.DocumentFileName))
+                                {
+                                    <a asp-action="DownloadDocument" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                        <i class="fas fa-download"></i> Download PDF
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No document</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="EditCourse" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
+                                <a asp-action="DeleteCourse" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                                <a asp-action="ViewEvents" asp-route-courseId="@item.Id" class="btn btn-info btn-sm">View Events</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+}

@@ -1,0 +1,112 @@
+﻿@model LogisticsSystem.Models.Course
+
+@{
+    ViewData["Title"] = "Edit Course";
+    var users = ViewBag.Users as List<LogisticsSystem.Models.User>;
+    string GetUserName(string id) => users?.FirstOrDefault(u => u.Id == id)?.Name ?? "Unknown";
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @Html.ValidationSummary(true, "", new { @class = "mb-0" })
+    </div>
+}
+
+<h2>Edit Course</h2>
+
+<form asp-action="EditCourse" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ShipperId" />
+
+    <div class="form-group">
+        <label asp-for="StartingPoint"></label>
+        <input asp-for="StartingPoint" class="form-control" required />
+        <span asp-validation-for="StartingPoint" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Destination"></label>
+        <input asp-for="Destination" class="form-control" required />
+        <span asp-validation-for="Destination" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DriverId"></label>
+        <select asp-for="DriverId" class="form-control" required>
+            <option value="">-- Select Driver --</option>
+            @if (users != null)
+            {
+                foreach (var driver in users.Where(u => u.Role == "Driver"))
+                {
+                    if (Model.DriverId == driver.Id)
+                    {
+                        @:<option value="@driver.Id" selected>@driver.Name (@driver.Id)</option>
+                    }
+                    else
+                    {
+                        @:<option value="@driver.Id">@driver.Name (@driver.Id)</option>
+                    }
+                }
+            }
+        </select>
+        <span asp-validation-for="DriverId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Shipper</label>
+        <input class="form-control" value="@GetUserName(Model.ShipperId) (@Model.ShipperId)" readonly />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IsCompleted"></label>
+        <input asp-for="IsCompleted" type="checkbox" />
+        <span asp-validation-for="IsCompleted" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        @* No label for document, just the upload UI *@
+        @if (!string.IsNullOrEmpty(Model.DocumentFileName))
+        {
+            <div class="mb-2">
+                
+            </div>
+            <div>
+                <input type="checkbox" id="swapPdfCheckbox" name="SwapPdf" style="display:inline-block; width:auto;" />
+                <label for="swapPdfCheckbox" style="display:inline-block;">Swap PDF</label>
+                <div class="swap-pdf-file">
+                    <input type="file" name="Document" class="form-control" accept=".pdf" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <input type="file" name="Document" class="form-control" accept=".pdf" />
+        }
+    </div>
+
+    <style>
+        /* Hide file input unless checkbox is checked */
+        #swapPdfCheckbox:not(:checked) ~ .swap-pdf-file {
+            display: none;
+        }
+        #swapPdfCheckbox:checked ~ .swap-pdf-file {
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="ManageCourses" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -17,5 +17,7 @@ namespace LogisticsSystem
         {
             return _database.GetCollection<T>(name);
         }
+
+        public IMongoDatabase Database => _database;
     }
 }

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "myxIcEH/dxmhRSxqRueq3hpURwH57Pm9wRD67QwOJ40=",
+  "Hash": "NVMFmtv7xrbqFd1Livs8V9NN/Yi5brcQL9tPAE8n0Oc=",
   "Source": "LogisticsSystem",
   "BasePath": "_content/LogisticsSystem",
   "Mode": "Default",
@@ -1193,6 +1193,44 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Identity": "C:\\Users\\supci\\source\\repos\\LogisticsSystem\\LogisticsSystem\\wwwroot\\lib\\microsoft\\signalr\\signalr.js",
+      "SourceId": "LogisticsSystem",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\supci\\source\\repos\\LogisticsSystem\\LogisticsSystem\\wwwroot\\",
+      "BasePath": "_content/LogisticsSystem",
+      "RelativePath": "lib/microsoft/signalr/signalr.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\lib\\microsoft\\signalr\\signalr.js"
+    },
+    {
+      "Identity": "C:\\Users\\supci\\source\\repos\\LogisticsSystem\\LogisticsSystem\\wwwroot\\lib\\microsoft\\signalr\\signalr.min.js",
+      "SourceId": "LogisticsSystem",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\supci\\source\\repos\\LogisticsSystem\\LogisticsSystem\\wwwroot\\",
+      "BasePath": "_content/LogisticsSystem",
+      "RelativePath": "lib/microsoft/signalr/signalr.min.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\lib\\microsoft\\signalr\\signalr.min.js"
     }
   ]
 }

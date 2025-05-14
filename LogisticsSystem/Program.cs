@@ -4,17 +4,28 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using LogisticsSystem.Services;
 using LogisticsSystem.Services.Contracts;
+using LogisticsSystem.Hubs;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
+// Add SignalR
+builder.Services.AddSignalR();
+
 // Rejestracja MongoDbContext i serwisów
 builder.Services.AddSingleton<LogisticsSystem.MongoDbContext>();
+builder.Services.AddSingleton<IMongoDatabase>(sp =>
+{
+    var context = sp.GetRequiredService<LogisticsSystem.MongoDbContext>();
+    return context.Database;
+});
 builder.Services.AddScoped<IUserService, LogisticsSystem.Services.UserService>();
 builder.Services.AddScoped<LogisticsSystem.Services.Contracts.ICourseService, LogisticsSystem.Services.CourseService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ICourseEventService, CourseEventService>();
+builder.Services.AddScoped<IChatService, ChatService>();
 
 // Konfiguracja JWT
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -70,5 +81,8 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Add SignalR hub endpoint
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

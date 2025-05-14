@@ -1,0 +1,254 @@
+@{
+    ViewData["Title"] = "Chat";
+    var userName = ViewBag.UserName ?? "Anonymous";
+    var userId = ViewBag.UserId ?? "unknown";
+    var recentUsers = ViewBag.RecentUsers as List<LogisticsSystem.Models.User>;
+    var allUsers = ViewBag.AllUsers as List<LogisticsSystem.Models.User>;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">Chat Rooms</h5>
+                </div>
+                <div class="list-group list-group-flush" id="roomList">
+                    <a href="#" class="list-group-item list-group-item-action active" data-room="general">General</a>
+                    <a href="#" class="list-group-item list-group-item-action" data-room="support">Support</a>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Chats</h5>
+                </div>
+                <div class="list-group list-group-flush" id="userList">
+                    @if (recentUsers != null && recentUsers.Any())
+                    {
+                        foreach (var user in recentUsers)
+                        {
+                            <a href="#" class="list-group-item list-group-item-action" data-userid="@user.Id" data-username="@user.Name">@user.Name <span class="text-muted small">(@user.Email)</span></a>
+                        }
+                    }
+                    else
+                    {
+                        <div class="list-group-item text-muted">No recent chats</div>
+                    }
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Start New Chat</h5>
+                </div>
+                <div class="p-2">
+                    <input type="text" id="userSearch" class="form-control mb-2" placeholder="Search users...">
+                    <div class="list-group" id="searchResults"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0" id="currentRoom">General</h5>
+                </div>
+                <div class="card-body">
+                    <div id="messageList" class="chat-messages" style="height: 400px; overflow-y: auto;"></div>
+                    <div class="mt-3">
+                        <div class="input-group">
+                            <input type="text" id="messageInput" class="form-control" placeholder="Type your message...">
+                            <button class="btn btn-primary" id="sendButton">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/microsoft/signalr/signalr.js"></script>
+    <script>
+        const userName = "@userName";
+        const userId = "@userId";
+        let currentRoom = "general";
+        let connection = null;
+        let privateChatWith = null;
+        let privateChatWithId = null;
+        const allUsers = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(allUsers ?? new List<LogisticsSystem.Models.User>()));
+
+        function getPrivateRoomId(userId1, userId2) {
+            // Always sort IDs to ensure both users join the same room
+            return 'private_' + [userId1, userId2].sort().join('_');
+        }
+
+        function addMessage(message) {
+            const messageDiv = document.createElement("div");
+            const isMine = message.senderId === userId;
+            messageDiv.className = "message mb-2" + (isMine ? " my-message" : "");
+            messageDiv.innerHTML = `
+                <div class="d-flex align-items-center${isMine ? ' justify-content-end' : ''}">
+                    <strong class="me-2">${message.senderName}</strong>
+                    <span class="badge bg-secondary me-2">${message.senderId}</span>
+                    <small class="text-muted">${new Date(message.timestamp).toLocaleString()}</small>
+                </div>
+                <div>${message.content}</div>
+            `;
+            document.getElementById("messageList").appendChild(messageDiv);
+            messageDiv.scrollIntoView({ behavior: "smooth" });
+
+            // --- Dynamic Recent Chats Update ---
+            // Only for private rooms
+            if (currentRoom.startsWith('private_')) {
+                const otherId = message.senderId === userId ? privateChatWithId : message.senderId;
+                if (otherId && !document.querySelector(`#userList a[data-userid='${otherId}']`)) {
+                    // Find user in allUsers
+                    const user = allUsers.find(u => u.Id === otherId);
+                    if (user) {
+                        const a = document.createElement("a");
+                        a.href = "#";
+                        a.className = "list-group-item list-group-item-action";
+                        a.dataset.userid = user.Id;
+                        a.dataset.username = user.Name;
+                        a.innerHTML = `${user.Name} <span class='text-muted small'>(${user.Email})</span>`;
+                        a.onclick = async function (e) {
+                            e.preventDefault();
+                            const privateRoomId = getPrivateRoomId(userId, user.Id);
+                            await switchRoom(privateRoomId, user.Name, user.Id);
+                        };
+                        document.getElementById("userList").appendChild(a);
+                    }
+                }
+            }
+        }
+
+        async function loadRoomMessages(roomId) {
+            document.getElementById("messageList").innerHTML = "<div class='text-center text-muted'>Loading...</div>";
+            const response = await fetch(`/api/room/${roomId}`);
+            const messages = await response.json();
+            document.getElementById("messageList").innerHTML = "";
+            messages.reverse().forEach(addMessage);
+        }
+
+        async function switchRoom(newRoom, displayName = null, otherId = null) {
+            if (newRoom === currentRoom) return;
+            await connection.invoke("LeaveRoom", currentRoom);
+            await connection.invoke("JoinRoom", newRoom);
+            currentRoom = newRoom;
+            privateChatWith = displayName;
+            privateChatWithId = otherId;
+            document.getElementById("currentRoom").textContent = displayName ? `Private chat with ${displayName}` : (newRoom.charAt(0).toUpperCase() + newRoom.slice(1));
+            await loadRoomMessages(newRoom);
+        }
+
+        async function startConnection() {
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl("/chatHub")
+                .build();
+
+            connection.on("ReceiveMessage", (message) => {
+                if (message.roomId === currentRoom) {
+                    addMessage(message);
+                }
+            });
+
+            await connection.start();
+            await connection.invoke("JoinRoom", currentRoom);
+            await loadRoomMessages(currentRoom);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            startConnection();
+
+            document.getElementById("sendButton").addEventListener("click", async () => {
+                const messageInput = document.getElementById("messageInput");
+                const content = messageInput.value.trim();
+                if (content) {
+                    try {
+                        await connection.invoke("SendMessage", {
+                            content: content,
+                            roomId: currentRoom,
+                            senderId: userId,
+                            senderName: userName
+                        });
+                        messageInput.value = "";
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }
+            });
+
+            document.getElementById("messageInput").addEventListener("keypress", (e) => {
+                if (e.key === "Enter") {
+                    document.getElementById("sendButton").click();
+                }
+            });
+
+            document.querySelectorAll("#roomList a").forEach(room => {
+                room.addEventListener("click", async (e) => {
+                    e.preventDefault();
+                    const newRoom = e.target.dataset.room;
+                    document.querySelectorAll("#roomList a").forEach(a => a.classList.remove("active"));
+                    e.target.classList.add("active");
+                    await switchRoom(newRoom, null);
+                });
+            });
+
+            document.querySelectorAll("#userList a").forEach(user => {
+                user.addEventListener("click", async (e) => {
+                    e.preventDefault();
+                    const otherUserId = e.target.dataset.userid;
+                    const otherUserName = e.target.dataset.username;
+                    const privateRoomId = getPrivateRoomId(userId, otherUserId);
+                    document.querySelectorAll("#roomList a").forEach(a => a.classList.remove("active"));
+                    await switchRoom(privateRoomId, otherUserName, otherUserId);
+                });
+            });
+
+            // Search functionality for new chats
+            const searchInput = document.getElementById("userSearch");
+            const searchResults = document.getElementById("searchResults");
+            searchInput.addEventListener("input", function () {
+                const query = searchInput.value.toLowerCase();
+                searchResults.innerHTML = "";
+                if (query.length === 0) return;
+                const filtered = allUsers.filter(u => u.Name.toLowerCase().includes(query) || u.Email.toLowerCase().includes(query));
+                filtered.forEach(u => {
+                    const a = document.createElement("a");
+                    a.href = "#";
+                    a.className = "list-group-item list-group-item-action";
+                    a.textContent = `${u.Name} (${u.Email})`;
+                    a.onclick = async function (e) {
+                        e.preventDefault();
+                        const privateRoomId = getPrivateRoomId(userId, u.Id);
+                        await switchRoom(privateRoomId, u.Name, u.Id);
+                        searchInput.value = "";
+                        searchResults.innerHTML = "";
+                    };
+                    searchResults.appendChild(a);
+                });
+            });
+        });
+    </script>
+}
+
+<style>
+    .chat-messages {
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 0.25rem;
+    }
+
+    .message {
+        padding: 0.5rem;
+        background-color: white;
+        border-radius: 0.25rem;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    .my-message {
+        background-color: #e6f7ff;
+        text-align: right;
+        margin-left: 25%;
+        margin-right: 0;
+        border-left: 3px solid #1890ff;
+    }
+</style> 

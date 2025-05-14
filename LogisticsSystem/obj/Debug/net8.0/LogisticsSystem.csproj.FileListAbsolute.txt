@@ -50,3 +50,5 @@ C:\Users\supci\source\repos\LogisticsSystem\LogisticsSystem\obj\Debug\net8.0\ref
 C:\Users\supci\source\repos\LogisticsSystem\LogisticsSystem\obj\Debug\net8.0\LogisticsSystem.pdb
 C:\Users\supci\source\repos\LogisticsSystem\LogisticsSystem\obj\Debug\net8.0\LogisticsSystem.genruntimeconfig.cache
 C:\Users\supci\source\repos\LogisticsSystem\LogisticsSystem\obj\Debug\net8.0\ref\LogisticsSystem.dll
+C:\Users\supci\source\repos\LogisticsSystem\LogisticsSystem\bin\Debug\net8.0\libman.json
+C:\Users\supci\source\repos\LogisticsSystem\LogisticsSystem\obj\Debug\net8.0\LogisticsSystem.sourcelink.json

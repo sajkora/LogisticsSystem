@@ -23,16 +23,21 @@ namespace LogisticsSystem.Services
             return await _messages
                 .Find(m => m.RoomId == roomId)
                 .SortByDescending(m => m.Timestamp)
-                .Limit(limit)
+                .Limit(limit > 0 ? limit : 50)
                 .ToListAsync();
         }
 
         public async Task<List<ChatMessage>> GetUserMessages(string userId, int limit = 50)
         {
+            var filter = Builders<ChatMessage>.Filter.Or(
+                Builders<ChatMessage>.Filter.Eq(m => m.SenderId, userId),
+                Builders<ChatMessage>.Filter.Regex(m => m.RoomId, new MongoDB.Bson.BsonRegularExpression($"private_{userId}_|private_.*_{userId}"))
+            );
+            
             return await _messages
-                .Find(m => m.SenderId == userId)
+                .Find(filter)
                 .SortByDescending(m => m.Timestamp)
-                .Limit(limit)
+                .Limit(limit > 0 ? limit : 50)
                 .ToListAsync();
         }
     }

@@ -1,22 +1,236 @@
-html {
-  font-size: 14px;
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap');
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  color: #222;
+  font-family: 'Roboto', Arial, sans-serif;
+}
+.container {
+  flex: 1 0 auto;
+}
+footer.footer {
+  flex-shrink: 0;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
+.card, .navbar, .footer, .list-group-item, .form-control {
+  background: #fff !important;
+  color: #222 !important;
+  border-radius: 12px !important;
+  border-color: #f2dede !important;
+  box-shadow: 0 2px 8px rgba(211,47,47,0.06);
+}
+
+.navbar {
+  background: #fff !important;
+  border-bottom: none !important;
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 4px 18px rgba(35,15,116,0.10);
+  min-height: 64px;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.navbar-brand {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #230f74 !important;
+  letter-spacing: 1px;
+  padding-right: 2rem;
+}
+
+h5, .card-header {
+  font-weight: 500;
+  font-size: 1.2rem;
+  color: #230f74;
+  background: transparent !important;
+  border: none !important;
+}
+
+.navbar-nav .nav-link {
+  color: #230f74 !important;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-right: 1.2rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.navbar-nav .nav-link:hover, .navbar-nav .nav-link:focus {
+  background: #f3f6fa !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(35,15,116,0.08);
+}
+.navbar-nav .nav-link.active, .navbar-nav .nav-link[aria-current="page"] {
+  background: #230f74 !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(35,15,116,0.12);
+}
+.navbar-toggler {
+  border-radius: 8px;
+  border: 1px solid #bfc6e6;
+}
+
+/* Remove global a, .btn, .list-group-item-action color overrides */
+/* Restore Bootstrap button and link colors */
+
+.btn-primary, .btn-outline-secondary:active, .btn-outline-secondary.active {
+  background: #230f74 !important;
+  color: #fff !important;
+  border-color: #230f74 !important;
+  font-weight: 500;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(211,47,47,0.10);
+}
+.btn-outline-secondary {
+  color: #230f74 !important;
+  border-color: #230f74 !important;
+  border-radius: 8px;
+}
+.btn-outline-secondary:hover {
+  background: #230f74 !important;
+  color: #fff !important;
+  border-color: #230f74 !important;
+}
+
+input.form-control, .form-control {
+  border-radius: 8px;
+  border: 1px solid #f2dede;
+  background: #fff;
+  color: #222;
+}
+input.form-control:focus, .form-control:focus {
+  border-color: #230f74;
+  box-shadow: 0 0 0 0.1rem #fff, 0 0 0 0.25rem #230f74;
+}
+
+/* Sidebar */
+.card.mb-3 {
+  background: #fafafa !important;
+  border: 1px solid #f2dede !important;
+  box-shadow: 0 2px 8px rgba(211,47,47,0.03);
+}
+
+/* Chat messages area */
+.chat-messages {
+  background: #fff;
+  padding: 1.2rem;
+  border-radius: 12px;
+  min-height: 350px;
+}
+
+.message {
+  background: #fff;
+  color: #222;
+  border-radius: 16px;
+  box-shadow: 0 1px 4px rgba(211,47,47,0.07);
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  max-width: 80%;
+  word-break: break-word;
+  border: 1px solid #f2dede;
+}
+.my-message {
+  background: #fff5f5;
+  border-left: 4px solid #230f74;
+  margin-left: auto;
+  text-align: right;
+}
+
+/* Message meta (sender, time) */
+.message .d-flex {
+  margin-bottom: 0.25rem;
+}
+.message strong {
+  color: #230f74;
+  font-weight: 700;
+}
+.message small {
+  color: #888;
+  font-size: 0.9em;
+}
+
+/* Send button */
+#sendButton {
+  background: #230f74;
+  border-color: #230f74;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+#sendButton:hover {
+  background: #230f74;
+  border-color: #230f74;
+}
+
+/* Misc */
+.list-group-item.text-muted {
+  color: #230f74 !important;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .chat-messages {
+    min-height: 200px;
+    padding: 0.5rem;
+  }
+  .message {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.97em;
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+/* Modern table styles */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(35,15,116,0.06);
+  overflow: hidden;
+  background: #fff;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e3e6f5;
+}
+thead {
+  background: #fff;
+}
+thead th {
+  font-weight: 600;
+  font-size: 1.08em;
+  color: #230f74;
+  padding: 0.85em 1em;
+  border-bottom: 2px solid #bfc6e6;
+}
+tbody tr {
+  background: #fff;
+  transition: background 0.2s;
+}
+tbody tr:nth-child(even) {
+  background: #fff;
+}
+tbody tr:hover {
+  background: #f3f6fa;
+}
+td, th {
+  padding: 0.75em 1em;
+  border: none;
+}
+td {
+  color: #222;
+  font-size: 1em;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+form button[type="submit"], form input[type="submit"], form .btn, form .form-actions {
+  margin-left: 0;
+  display: inline-block;
 }
 
-body {
-  margin-bottom: 60px;
+/* If you want to add more left margin to match input padding, adjust here: */
+form button[type="submit"], form input[type="submit"], form .btn {
+  margin-left: 0;
 }

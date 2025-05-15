@@ -101,6 +101,9 @@
             if (currentRoom.startsWith('private_')) {
                 const otherId = message.senderId === userId ? privateChatWithId : message.senderId;
                 if (otherId && !document.querySelector(`#userList a[data-userid='${otherId}']`)) {
+                    // Remove 'No recent chats' message if present
+                    const noChats = document.querySelector('#userList .text-muted');
+                    if (noChats) noChats.remove();
                     // Find user in allUsers
                     const user = allUsers.find(u => u.Id === otherId);
                     if (user) {
@@ -126,7 +129,11 @@
             const response = await fetch(`/api/room/${roomId}`);
             const messages = await response.json();
             document.getElementById("messageList").innerHTML = "";
-            messages.reverse().forEach(addMessage);
+            if (messages.length === 0) {
+                document.getElementById("messageList").innerHTML = "<div class='text-center text-muted'>No messages yet. Start the conversation!</div>";
+            } else {
+                messages.reverse().forEach(addMessage);
+            }
         }
 
         async function switchRoom(newRoom, displayName = null, otherId = null) {

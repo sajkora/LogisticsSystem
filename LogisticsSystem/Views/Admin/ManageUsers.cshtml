@@ -6,6 +6,10 @@
 <h2>Zarządzanie Użytkownikami</h2>
 <a asp-action="CreateUser" class="btn btn-primary">Dodaj użytkownika</a>
 
+<div class="my-3">
+    <input type="text" id="userSearch" class="form-control" placeholder="Szukaj użytkownika... (ID, Imię, Email)">
+</div>
+
 <ul class="nav nav-tabs mt-3" id="userTabs" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="admins-tab" data-bs-toggle="tab" data-bs-target="#admins" type="button" role="tab" aria-controls="admins" aria-selected="true">Administratorzy</button>
@@ -100,3 +104,25 @@
         </table>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    document.getElementById('userSearch').addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        document.querySelectorAll('.tab-pane.active table tbody tr').forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query) ? '' : 'none';
+        });
+    });
+    // Also filter when switching tabs
+    document.querySelectorAll('#userTabs button[data-bs-toggle="tab"]').forEach(tabBtn => {
+        tabBtn.addEventListener('shown.bs.tab', function() {
+            const query = document.getElementById('userSearch').value.toLowerCase();
+            document.querySelectorAll('.tab-pane.active table tbody tr').forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        });
+    });
+</script>
+}

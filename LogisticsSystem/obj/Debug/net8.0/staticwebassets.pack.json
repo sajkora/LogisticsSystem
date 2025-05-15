@@ -13,6 +13,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\supci\\source\\repos\\LogisticsSystem\\LogisticsSystem\\wwwroot\\images\\adi-trans-logo.png",
+      "PackagePath": "staticwebassets\\images\\adi-trans-logo.png"
+    },
+    {
       "Id": "C:\\Users\\supci\\source\\repos\\LogisticsSystem\\LogisticsSystem\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

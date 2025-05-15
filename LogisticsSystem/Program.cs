@@ -51,7 +51,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             {
                 if (string.IsNullOrEmpty(context.Token))
                 {
-                    // Prbujemy odczytać token z ciasteczka "AuthToken"
+                    // Próbujemy odczytać token z ciasteczka "AuthToken"
                     context.Token = context.Request.Cookies["AuthToken"];
                 }
                 return Task.CompletedTask;

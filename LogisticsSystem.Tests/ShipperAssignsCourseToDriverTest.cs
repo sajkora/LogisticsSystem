@@ -31,6 +31,9 @@ namespace LogisticsSystem.Tests
             mockUserService.Setup(x => x.GetUserByIdAsync(driverId)).ReturnsAsync(driver);
             mockUserService.Setup(x => x.GetAllUsersAsync()).ReturnsAsync(new List<User> { shipper, driver });
 
+            mockCourseService.Setup(x => x.AssignCourseFromViewModelAsync(It.IsAny<AssignCourseViewModel>(), null))
+                .ReturnsAsync((AssignCourseViewModel m, IFormFile d) => (true, null, m));
+
             var controller = new ShipperController(
                 mockCourseService.Object,
                 mockUserService.Object,
@@ -65,10 +68,11 @@ namespace LogisticsSystem.Tests
 
             var result = await controller.AssignCourse(model, null);
 
-            var viewResult = Assert.IsType<ViewResult>(result);
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("AssignCourse", redirectResult.ActionName);
             Assert.True(controller.TempData.ContainsKey("SuccessMessage"));
             Assert.Equal("Course assigned successfully.", controller.TempData["SuccessMessage"]);
-            mockCourseService.Verify(x => x.AssignCourseAsync(It.IsAny<Course>(), null), Times.Once);
+            mockCourseService.Verify(x => x.AssignCourseFromViewModelAsync(It.IsAny<AssignCourseViewModel>(), null), Times.Once);
         }
     }
 } 

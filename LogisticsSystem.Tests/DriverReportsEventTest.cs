@@ -55,11 +55,11 @@ namespace LogisticsSystem.Tests
                 Timestamp = DateTime.UtcNow
             };
 
+            mockCourseEventService.Setup(x => x.ReportEventAsync(It.IsAny<CourseEvent>(), driverId)).ReturnsAsync((true, null));
             var result = await controller.ReportEvent(model);
-
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("MyCourses", redirectResult.ActionName);
-            mockCourseEventService.Verify(x => x.AddEventAsync(It.IsAny<CourseEvent>()), Times.Once);
+            mockCourseEventService.Verify(x => x.ReportEventAsync(It.IsAny<CourseEvent>(), driverId), Times.Once);
         }
     }
 } 

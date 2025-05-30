@@ -26,6 +26,7 @@ namespace LogisticsSystem.Tests
             var mockFileService = new Mock<IFileService>();
 
             mockUserService.Setup(x => x.GetUserByIdAsync(adminId)).ReturnsAsync(admin);
+            mockUserService.Setup(x => x.CreateUserFromViewModelAsync(It.IsAny<RegisterViewModel>())).ReturnsAsync((true, null));
 
             var controller = new AdminController(
                 mockUserService.Object,
@@ -58,7 +59,7 @@ namespace LogisticsSystem.Tests
 
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("ManageUsers", redirectResult.ActionName);
-            mockUserService.Verify(x => x.CreateUserAsync(It.IsAny<User>()), Times.Once);
+            mockUserService.Verify(x => x.CreateUserFromViewModelAsync(It.IsAny<RegisterViewModel>()), Times.Once);
         }
     }
 } 

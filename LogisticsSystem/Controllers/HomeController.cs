@@ -18,20 +18,10 @@ namespace LogisticsSystem.Controllers
 
         public async Task<IActionResult> Index()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    var user = await _userService.GetUserByIdAsync(userId);
-                    if (user != null)
-                    {
-                        ViewBag.UserName = user.Name;
-                        ViewBag.UserEmail = user.Email;
-                        ViewBag.UserId = user.Id;
-                    }
-                }
-            }
+            var (name, email, id) = await _userService.GetUserDisplayInfoAsync(User);
+            ViewBag.UserName = name;
+            ViewBag.UserEmail = email;
+            ViewBag.UserId = id;
             return View();
         }
 

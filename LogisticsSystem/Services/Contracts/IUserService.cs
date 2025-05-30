@@ -13,5 +13,10 @@ namespace LogisticsSystem.Services.Contracts
         Task CreateUserAsync(User user);
         Task<ReplaceOneResult> UpdateUserAsync(User user);
         Task DeleteUserAsync(string id);
+        Task<ManageUsersViewModel> GetManageUsersViewModelAsync();
+        Task<(bool Success, string ErrorMessage)> CreateUserFromViewModelAsync(RegisterViewModel model);
+        Task<EditUserViewModel> GetEditUserViewModelAsync(string id);
+        Task<(bool Success, string ErrorMessage)> UpdateUserFromViewModelAsync(EditUserViewModel model);
+        Task<(string Name, string Email, string Id)> GetUserDisplayInfoAsync(System.Security.Claims.ClaimsPrincipal user);
     }
 }

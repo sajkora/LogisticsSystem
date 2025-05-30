@@ -26,6 +26,7 @@ builder.Services.AddScoped<LogisticsSystem.Services.Contracts.ICourseService, Lo
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ICourseEventService, CourseEventService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Konfiguracja JWT
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();

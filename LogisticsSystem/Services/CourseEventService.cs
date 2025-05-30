@@ -33,5 +33,15 @@ namespace LogisticsSystem.Services
         {
             return await _courseEvents.Find(e => e.DriverId == driverId).SortByDescending(e => e.Timestamp).ToListAsync();
         }
+
+        public async Task<(bool Success, string ErrorMessage)> ReportEventAsync(CourseEvent model, string driverId)
+        {
+            if (model.DriverId != driverId)
+            {
+                return (false, "Forbidden");
+            }
+            await AddEventAsync(model);
+            return (true, null);
+        }
     }
 } 

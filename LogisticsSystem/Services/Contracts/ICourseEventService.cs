@@ -9,5 +9,6 @@ namespace LogisticsSystem.Services.Contracts
         Task AddEventAsync(CourseEvent courseEvent);
         Task<List<CourseEvent>> GetEventsByCourseIdAsync(string courseId);
         Task<List<CourseEvent>> GetEventsByDriverIdAsync(string driverId);
+        Task<(bool Success, string ErrorMessage)> ReportEventAsync(CourseEvent model, string driverId);
     }
 } 

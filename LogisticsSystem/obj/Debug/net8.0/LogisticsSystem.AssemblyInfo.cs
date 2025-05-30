@@ -14,11 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LogisticsSystem")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+88e7aa39d58897cb13785f440eb2aee48b3db5c2")]
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8120f57fe94916a33d924402373a4cba00d9e42d")]
->>>>>>> 14d3268 (E2E TESTS)
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8d35694582b297b6d2edeb3a4c3807c20568ced6")]
 [assembly: System.Reflection.AssemblyProductAttribute("LogisticsSystem")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LogisticsSystem")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

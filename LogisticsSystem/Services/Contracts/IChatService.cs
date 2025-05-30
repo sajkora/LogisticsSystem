@@ -7,5 +7,7 @@ namespace LogisticsSystem.Services
         Task<ChatMessage> SaveMessage(ChatMessage message);
         Task<List<ChatMessage>> GetRoomMessages(string roomId, int limit = 50);
         Task<List<ChatMessage>> GetUserMessages(string userId, int limit = 50);
+        Task<List<User>> GetRecentChatUsers(string userId);
+        Task<string> GetDisplayName(string userId);
     }
 } 

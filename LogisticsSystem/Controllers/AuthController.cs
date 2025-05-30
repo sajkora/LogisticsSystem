@@ -15,12 +15,12 @@ namespace LogisticsSystem.Controllers
     public class AuthController : Controller
     {
         private readonly IConfiguration _configuration;
-        private readonly IUserService _userService;
+        private readonly IAuthService _authService;
 
-        public AuthController(IConfiguration configuration, IUserService userService)
+        public AuthController(IConfiguration configuration, IAuthService authService)
         {
             _configuration = configuration;
-            _userService = userService;
+            _authService = authService;
         }
 
         // GET: /Auth/Login
@@ -42,34 +42,14 @@ namespace LogisticsSystem.Controllers
                 return View(model);
             }
 
-            var user = await _userService.GetUserByEmailAsync(model.Email);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
+            var (success, error, user) = await _authService.ValidateUserCredentialsAsync(model.Email, model.Password);
+            if (!success)
             {
-                ModelState.AddModelError("", "Invalid login credentials.");
+                ModelState.AddModelError("", error);
                 return View(model);
             }
 
-            // Create claims for the token
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.Email),
-                new Claim(ClaimTypes.Role, user.Role)
-
-            };
-
-            // Tworzymy token JWT
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(30),
-                signingCredentials: creds
-            );
-
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenString = _authService.GenerateJwtToken(user);
 
             // Set the "AuthToken" cookie
             Response.Cookies.Append("AuthToken", tokenString, new CookieOptions

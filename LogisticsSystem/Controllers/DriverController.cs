@@ -24,9 +24,7 @@ public class DriverController : Controller
     public async Task<IActionResult> MyCourses()
     {
         var driverId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        var courses = await _courseService.GetDriverCoursesAsync(driverId);
-        var ongoing = courses.Where(c => !c.IsCompleted);
-        var completed = courses.Where(c => c.IsCompleted);
+        var (ongoing, completed) = await _courseService.GetDriverDashboardAsync(driverId);
         return View((ongoing, completed));
     }
 
@@ -37,12 +35,7 @@ public class DriverController : Controller
         var course = await _courseService.GetCourseByIdAsync(courseId);
         if (course == null || course.DriverId != driverId)
             return NotFound();
-
-        var model = new CourseEvent
-        {
-            CourseId = courseId,
-            DriverId = driverId
-        };
+        var model = new CourseEvent { CourseId = courseId, DriverId = driverId };
         return View(model);
     }
 
@@ -52,12 +45,13 @@ public class DriverController : Controller
     public async Task<IActionResult> ReportEvent(CourseEvent model)
     {
         var driverId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (model.DriverId != driverId)
-            return Forbid();
-        model.Timestamp = DateTime.UtcNow;
-        if (!ModelState.IsValid)
+        var (success, error) = await _courseEventService.ReportEventAsync(model, driverId);
+        if (!success)
+        {
+            if (error == "Forbidden") return Forbid();
+            ModelState.AddModelError("", error);
             return View(model);
-        await _courseEventService.AddEventAsync(model);
+        }
         TempData["SuccessMessage"] = "Event reported successfully.";
         return RedirectToAction("MyCourses");
     }
@@ -66,15 +60,8 @@ public class DriverController : Controller
     public async Task<IActionResult> DownloadDocument(string id)
     {
         var driverId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        var course = await _courseService.GetCourseByIdAsync(id);
-        
-        if (course == null || course.DriverId != driverId)
-            return NotFound();
-
-        var documentBytes = await _courseService.GetCourseDocumentAsync(id);
-        if (documentBytes == null)
-            return NotFound();
-
-        return File(documentBytes, "application/pdf", course.DocumentFileName);
+        var (documentBytes, fileName) = await _courseService.GetDriverCourseDocumentAsync(id, driverId);
+        if (documentBytes == null) return NotFound();
+        return File(documentBytes, "application/pdf", fileName);
     }
 }

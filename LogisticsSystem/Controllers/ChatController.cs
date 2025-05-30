@@ -21,40 +21,10 @@ namespace LogisticsSystem.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "unknown";
-            var user = await _userService.GetUserByIdAsync(userId);
-            var displayName = user?.Name ?? "Anonymous";
-
-            // Fetch all users for search
-            var allUsers = await _userService.GetAllUsersAsync();
-            ViewBag.AllUsers = allUsers.Where(u => u.Id != userId).ToList();
-
-            // Fetch recent chat users (those the current user has messaged or been messaged by)
-            var messages = (await _chatService.GetUserMessages(userId, 1000))
-                .Concat(await _chatService.GetRoomMessages(userId, 1000)) // in case private rooms use userId as roomId
-                .ToList();
-
-            // Helper function to extract the other user's ID from a private room name
-            string GetOtherUserId(string roomId, string currentUserId)
-            {
-                if (!roomId.StartsWith("private_")) return null;
-                var ids = roomId.Replace("private_", "").Split('_');
-                return ids.FirstOrDefault(id => id != currentUserId);
-            }
-
-            var recentUserIds = messages
-                .Select(m =>
-                    m.SenderId == userId
-                        ? GetOtherUserId(m.RoomId, userId)
-                        : m.SenderId
-                )
-                .Where(id => !string.IsNullOrEmpty(id) && id != userId)
-                .Distinct()
-                .ToList();
-            var recentUsers = allUsers.Where(u => recentUserIds.Contains(u.Id)).ToList();
-            ViewBag.RecentUsers = recentUsers;
-
-            ViewBag.UserName = displayName;
+            ViewBag.UserName = await _chatService.GetDisplayName(userId);
             ViewBag.UserId = userId;
+            ViewBag.AllUsers = (await _userService.GetAllUsersAsync()).Where(u => u.Id != userId).ToList();
+            ViewBag.RecentUsers = await _chatService.GetRecentChatUsers(userId);
             return View();
         }
 

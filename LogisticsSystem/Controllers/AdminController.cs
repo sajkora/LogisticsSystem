@@ -24,7 +24,7 @@ namespace LogisticsSystem.Controllers
             _fileService = fileService;
         }
 
-        #region Zarządzanie użytkownikami
+        #region User Management
 
         // GET: /Admin/ManageUsers
         public async Task<IActionResult> ManageUsers()
@@ -60,7 +60,7 @@ namespace LogisticsSystem.Controllers
             var existingUser = await _userService.GetUserByEmailAsync(model.Email);
             if (existingUser != null)
             {
-                ModelState.AddModelError("", "Użytkownik o podanym adresie email już istnieje.");
+                ModelState.AddModelError("", "A user with the given email already exists.");
                 return View(model);
             }
 
@@ -124,13 +124,24 @@ namespace LogisticsSystem.Controllers
         // GET: /Admin/DeleteUser?id=...
         public async Task<IActionResult> DeleteUser(string id)
         {
-            await _userService.DeleteUserAsync(id);
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+                return NotFound();
+            return View(user);
+        }
+
+        // POST: /Admin/DeleteUser
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(User model)
+        {
+            await _userService.DeleteUserAsync(model.Id);
             return RedirectToAction("ManageUsers");
         }
 
         #endregion
 
-        #region Zarządzanie kursami
+        #region Course Management
 
         // GET: /Admin/ManageCourses
         public async Task<IActionResult> ManageCourses(string startingPoint = null, string destination = null, string description = null, string status = null, string shipper = null, string driver = null)

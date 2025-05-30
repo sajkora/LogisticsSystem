@@ -55,6 +55,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     context.Token = context.Request.Cookies["AuthToken"];
                 }
                 return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                // Skip the default logic.
+                context.HandleResponse();
+                context.Response.Redirect("/Auth/Login");
+                return Task.CompletedTask;
             }
         };
     });
@@ -77,6 +84,17 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Your custom middleware (optional, but not needed for 403 anymore)
+app.Use(async (context, next) =>
+{
+    await next();
+    if (context.Response.StatusCode == 401)
+    {
+        context.Response.Redirect("/Auth/Login");
+    }
+    // No need to handle 403 here anymore
+});
 
 app.MapControllerRoute(
     name: "default",

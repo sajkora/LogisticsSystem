@@ -24,7 +24,7 @@ namespace LogisticsSystem.Models
         [BindNever]
         public List<User> Drivers { get; set; }
 
-        [Display(Name = "Supply Document (PDF)")]
+        
         public IFormFile Document { get; set; }
     }
 } 

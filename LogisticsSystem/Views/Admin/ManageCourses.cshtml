@@ -8,16 +8,12 @@
     var selectedCompleted = (string)ViewBag.FilterStatus == "Completed" ? "selected" : "";
     var filterShipper = (string)ViewBag.FilterShipper;
     var filterDriver = (string)ViewBag.FilterDriver;
+    var currentUserId = ViewBag.UserId as string;
 }
 
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-}
-
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
 
 <h2>Manage Courses</h2>
@@ -152,7 +148,7 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(item.DocumentFileName))
                                 {
-                                    <a asp-action="DownloadDocument" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                    <a asp-action="DownloadDocument" asp-route-id="@item.Id" class="btn btn-info btn-sm me-2 mb-1">
                                         <i class="fas fa-download"></i> Download PDF
                                     </a>
                                 }
@@ -162,8 +158,8 @@
                                 }
                             </td>
                             <td>
-                                <a asp-action="EditCourse" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
-                                <a asp-action="DeleteCourse" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                                <a asp-action="EditCourse" asp-route-id="@item.Id" class="btn btn-warning btn-sm me-2 mb-1">Edit</a>
+                                <a asp-action="DeleteCourse" asp-route-id="@item.Id" class="btn btn-danger btn-sm mb-1">Delete</a>
                             </td>
                         </tr>
                     }
@@ -210,7 +206,7 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(item.DocumentFileName))
                                 {
-                                    <a asp-action="DownloadDocument" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                    <a asp-action="DownloadDocument" asp-route-id="@item.Id" class="btn btn-info btn-sm me-2 mb-1">
                                         <i class="fas fa-download"></i> Download PDF
                                     </a>
                                 }
@@ -220,8 +216,8 @@
                                 }
                             </td>
                             <td>
-                                <a asp-action="EditCourse" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
-                                <a asp-action="DeleteCourse" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                                <a asp-action="EditCourse" asp-route-id="@item.Id" class="btn btn-warning btn-sm me-2 mb-1">Edit</a>
+                                <a asp-action="DeleteCourse" asp-route-id="@item.Id" class="btn btn-danger btn-sm mb-1">Delete</a>
                             </td>
                         </tr>
                     }

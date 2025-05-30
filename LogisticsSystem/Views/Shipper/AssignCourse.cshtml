@@ -8,10 +8,6 @@
 {
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
 @if (ViewBag.DebugMessage != null)
 {
     <div class="alert alert-info">@ViewBag.DebugMessage</div>
@@ -30,15 +26,6 @@
     </div>
 }
 
-@if (ViewBag.UserName != null && ViewBag.UserEmail != null && ViewBag.UserId != null)
-{
-    <div class="alert alert-info text-start mt-3">
-        <strong>Logged in as:</strong><br />
-        Name: @ViewBag.UserName <br />
-        Email: @ViewBag.UserEmail <br />
-        Id: @ViewBag.UserId
-    </div>
-}
 
 <h2>Assign Course</h2>
 
@@ -77,11 +64,34 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
 
+            <div class="form-group form-check form-switch mt-3">
+                <input class="form-check-input" type="checkbox" id="IsCompleted" name="IsCompleted">
+                <label class="form-check-label" for="IsCompleted">Is Completed</label>
+            </div>
+
             <div class="form-group">
-                <label asp-for="Document" class="control-label"></label>
-                <input type="file" asp-for="Document" class="form-control" accept=".pdf" />
+                
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="swapPdfCheckbox" name="SwapPdf">
+                    <label class="form-check-label" for="swapPdfCheckbox">Swap supply file</label>
+                </div>
+                <div id="swapPdfFile" style="display:none;">
+                    <input type="file" asp-for="Document" class="form-control mt-2" accept=".pdf" />
+                </div>
                 <span asp-validation-for="Document" class="text-danger"></span>
             </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var swapCheckbox = document.getElementById('swapPdfCheckbox');
+                    var swapFile = document.getElementById('swapPdfFile');
+                    if (swapCheckbox) {
+                        swapCheckbox.addEventListener('change', function() {
+                            swapFile.style.display = this.checked ? 'block' : 'none';
+                        });
+                    }
+                });
+            </script>
 
             <div class="form-group mt-3">
                 <input type="submit" value="Assign Course" class="btn btn-primary" />

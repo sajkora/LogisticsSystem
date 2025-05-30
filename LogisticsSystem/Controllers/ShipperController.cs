@@ -127,6 +127,8 @@ public class ShipperController : Controller
     // Widok monitorowania kursów – lista wszystkich kursów
     public async Task<IActionResult> MonitorCourses(string startingPoint = null, string destination = null, string description = null, string status = null, string shipper = null, string driver = null)
     {
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        ViewBag.UserId = userId;
         var courses = await _courseService.GetAllCoursesAsync();
         if (!string.IsNullOrEmpty(startingPoint))
             courses = courses.Where(c => c.StartingPoint != null && c.StartingPoint.Contains(startingPoint, StringComparison.OrdinalIgnoreCase));

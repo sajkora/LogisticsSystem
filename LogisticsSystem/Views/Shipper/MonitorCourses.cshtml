@@ -8,6 +8,7 @@
     var selectedCompleted = (string)ViewBag.FilterStatus == "Completed" ? "selected" : "";
     var filterShipper = (string)ViewBag.FilterShipper;
     var filterDriver = (string)ViewBag.FilterDriver;
+    var currentUserId = ViewBag.UserId as string;
 }
 
 @if (TempData["ErrorMessage"] != null)
@@ -134,7 +135,7 @@
                         <tr>
                             <td>@item.StartingPoint</td>
                             <td>@item.Destination</td>
-                            <td>@item.Description</td>
+                            <td class="description-cell">@item.Description</td>
                             <td>@(item.IsCompleted ? "Completed" : "In Progress")</td>
                             <td>
                                 @GetUserName(item.ShipperId) <br />
@@ -147,7 +148,7 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(item.DocumentFileName))
                                 {
-                                    <a asp-action="DownloadDocument" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                    <a asp-action="DownloadDocument" asp-route-id="@item.Id" class="btn btn-info btn-sm me-2 mb-1">
                                         <i class="fas fa-download"></i> Download PDF
                                     </a>
                                 }
@@ -157,9 +158,12 @@
                                 }
                             </td>
                             <td>
-                                <a asp-action="EditCourse" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
-                                <a asp-action="DeleteCourse" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
-                                <a asp-action="ViewEvents" asp-route-courseId="@item.Id" class="btn btn-info btn-sm">View Events</a>
+                                @if (item.ShipperId == currentUserId)
+                                {
+                                    <a asp-action="EditCourse" asp-route-id="@item.Id" class="btn btn-warning btn-sm me-2 mb-1">Edit</a>
+                                    <a asp-action="DeleteCourse" asp-route-id="@item.Id" class="btn btn-danger btn-sm me-2 mb-1">Delete</a>
+                                }
+                                <a asp-action="ViewEvents" asp-route-courseId="@item.Id" class="btn btn-secondary btn-sm mb-1">View Events</a>
                             </td>
                         </tr>
                     }
@@ -193,7 +197,7 @@
                         <tr>
                             <td>@item.StartingPoint</td>
                             <td>@item.Destination</td>
-                            <td>@item.Description</td>
+                            <td class="description-cell">@item.Description</td>
                             <td>@(item.IsCompleted ? "Completed" : "In Progress")</td>
                             <td>
                                 @GetUserName(item.ShipperId) <br />
@@ -206,7 +210,7 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(item.DocumentFileName))
                                 {
-                                    <a asp-action="DownloadDocument" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                    <a asp-action="DownloadDocument" asp-route-id="@item.Id" class="btn btn-info btn-sm me-2 mb-1">
                                         <i class="fas fa-download"></i> Download PDF
                                     </a>
                                 }
@@ -216,9 +220,12 @@
                                 }
                             </td>
                             <td>
-                                <a asp-action="EditCourse" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
-                                <a asp-action="DeleteCourse" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
-                                <a asp-action="ViewEvents" asp-route-courseId="@item.Id" class="btn btn-info btn-sm">View Events</a>
+                                @if (item.ShipperId == currentUserId)
+                                {
+                                    <a asp-action="EditCourse" asp-route-id="@item.Id" class="btn btn-warning btn-sm me-2 mb-1">Edit</a>
+                                    <a asp-action="DeleteCourse" asp-route-id="@item.Id" class="btn btn-danger btn-sm me-2 mb-1">Delete</a>
+                                }
+                                <a asp-action="ViewEvents" asp-route-courseId="@item.Id" class="btn btn-secondary btn-sm mb-1">View Events</a>
                             </td>
                         </tr>
                     }
@@ -231,3 +238,12 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 }
+
+<style>
+.description-cell {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    max-width: 300px;
+    white-space: pre-line;
+}
+</style>

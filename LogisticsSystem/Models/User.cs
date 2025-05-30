@@ -10,18 +10,18 @@ namespace LogisticsSystem.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
-        [Required(ErrorMessage = "Imię jest wymagane.")]
+        [Required(ErrorMessage = "Name is required.")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Email jest wymagany.")]
-        [EmailAddress(ErrorMessage = "Niepoprawny format adresu email.")]
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
         public string Email { get; set; }
 
-        // Nie oznaczamy [Required] – walidacja hasła odbywa się w DTO przy rejestracji
+        // Do not mark as [Required] – password validation is handled in the DTO during registration
         [DataType(DataType.Password)]
         public string PasswordHash { get; set; }
 
-        [Required(ErrorMessage = "Rola jest wymagana.")]
+        [Required(ErrorMessage = "Role is required.")]
         public string Role { get; set; }
     }
 }

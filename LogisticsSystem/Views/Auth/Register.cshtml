@@ -1,9 +1,9 @@
 ﻿@model LogisticsSystem.Models.RegisterViewModel
 @{
-    ViewBag.Title = "Rejestracja nowego użytkownika";
+    ViewBag.Title = "Register New User";
 }
 
-<h2>Rejestracja nowego użytkownika</h2>
+<h2>Register New User</h2>
 
 <form asp-action="Register" method="post">
     <div class="form-group">
@@ -24,12 +24,12 @@
     <div class="form-group">
         <label asp-for="Role"></label>
         <select asp-for="Role" class="form-control">
-            <option value="">-- Wybierz rolę --</option>
+            <option value="">-- Select role --</option>
             <option value="Admin">Admin</option>
             <option value="Shipper">Shipper</option>
             <option value="Driver">Driver</option>
         </select>
         <span asp-validation-for="Role" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Zarejestruj użytkownika</button>
+    <button type="submit" class="btn btn-primary">Register User</button>
 </form>

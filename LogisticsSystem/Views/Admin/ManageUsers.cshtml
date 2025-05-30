@@ -1,24 +1,24 @@
 ﻿@model ManageUsersViewModel
 @{
-    ViewBag.Title = "Zarządzanie Użytkownikami";
+    ViewBag.Title = "User Management";
 }
 
-<h2>Zarządzanie Użytkownikami</h2>
-<a asp-action="CreateUser" class="btn btn-primary">Dodaj użytkownika</a>
+<h2>User Management</h2>
+<a asp-action="CreateUser" class="btn btn-primary">Add User</a>
 
 <div class="my-3">
-    <input type="text" id="userSearch" class="form-control" placeholder="Szukaj użytkownika... (ID, Imię, Email)">
+    <input type="text" id="userSearch" class="form-control" placeholder="Search user... (ID, Name, Email)">
 </div>
 
 <ul class="nav nav-tabs mt-3" id="userTabs" role="tablist">
     <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="admins-tab" data-bs-toggle="tab" data-bs-target="#admins" type="button" role="tab" aria-controls="admins" aria-selected="true">Administratorzy</button>
+        <button class="nav-link active" id="admins-tab" data-bs-toggle="tab" data-bs-target="#admins" type="button" role="tab" aria-controls="admins" aria-selected="true">Admins</button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="shippers-tab" data-bs-toggle="tab" data-bs-target="#shippers" type="button" role="tab" aria-controls="shippers" aria-selected="false">Spedytorzy</button>
+        <button class="nav-link" id="shippers-tab" data-bs-toggle="tab" data-bs-target="#shippers" type="button" role="tab" aria-controls="shippers" aria-selected="false">Shippers</button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="drivers-tab" data-bs-toggle="tab" data-bs-target="#drivers" type="button" role="tab" aria-controls="drivers" aria-selected="false">Kierowcy</button>
+        <button class="nav-link" id="drivers-tab" data-bs-toggle="tab" data-bs-target="#drivers" type="button" role="tab" aria-controls="drivers" aria-selected="false">Drivers</button>
     </li>
 </ul>
 
@@ -28,9 +28,9 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Imię</th>
+                    <th>Name</th>
                     <th>Email</th>
-                    <th>Akcje</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,8 +41,8 @@
                         <td>@user.Name</td>
                         <td>@user.Email</td>
                         <td>
-                            <a asp-action="EditUser" asp-route-id="@user.Id" class="btn btn-warning">Edytuj</a>
-                            <a asp-action="DeleteUser" asp-route-id="@user.Id" class="btn btn-danger">Usuń</a>
+                            <a asp-action="EditUser" asp-route-id="@user.Id" class="btn btn-warning btn-sm me-2 mb-1">Edit</a>
+                            <a asp-action="DeleteUser" asp-route-id="@user.Id" class="btn btn-danger btn-sm mb-1">Delete</a>
                         </td>
                     </tr>
                 }
@@ -55,9 +55,9 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Imię</th>
+                    <th>Name</th>
                     <th>Email</th>
-                    <th>Akcje</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -68,8 +68,8 @@
                         <td>@user.Name</td>
                         <td>@user.Email</td>
                         <td>
-                            <a asp-action="EditUser" asp-route-id="@user.Id" class="btn btn-warning">Edytuj</a>
-                            <a asp-action="DeleteUser" asp-route-id="@user.Id" class="btn btn-danger">Usuń</a>
+                            <a asp-action="EditUser" asp-route-id="@user.Id" class="btn btn-warning btn-sm me-2 mb-1">Edit</a>
+                            <a asp-action="DeleteUser" asp-route-id="@user.Id" class="btn btn-danger btn-sm mb-1">Delete</a>
                         </td>
                     </tr>
                 }
@@ -82,9 +82,9 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Imię</th>
+                    <th>Name</th>
                     <th>Email</th>
-                    <th>Akcje</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -95,8 +95,8 @@
                         <td>@user.Name</td>
                         <td>@user.Email</td>
                         <td>
-                            <a asp-action="EditUser" asp-route-id="@user.Id" class="btn btn-warning">Edytuj</a>
-                            <a asp-action="DeleteUser" asp-route-id="@user.Id" class="btn btn-danger">Usuń</a>
+                            <a asp-action="EditUser" asp-route-id="@user.Id" class="btn btn-warning btn-sm me-2 mb-1">Edit</a>
+                            <a asp-action="DeleteUser" asp-route-id="@user.Id" class="btn btn-danger btn-sm mb-1">Delete</a>
                         </td>
                     </tr>
                 }

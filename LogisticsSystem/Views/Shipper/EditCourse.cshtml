@@ -62,24 +62,23 @@
         <label>Shipper</label>
         <input class="form-control" value="@GetUserName(Model.ShipperId) (@Model.ShipperId)" readonly />
     </div>
-    <div class="form-group">
-        <label asp-for="IsCompleted"></label>
-        <input asp-for="IsCompleted" type="checkbox" />
+    <div class="form-group form-check form-switch">
+        <input class="form-check-input" type="checkbox" asp-for="IsCompleted" id="IsCompleted">
+        <label class="form-check-label" for="IsCompleted">Is Completed</label>
         <span asp-validation-for="IsCompleted" class="text-danger"></span>
     </div>
     <div class="form-group">
-        
         @if (!string.IsNullOrEmpty(Model.DocumentFileName))
         {
             <div class="mb-2">
                 <!-- Removed the 'View current PDF' link -->
             </div>
-            <div>
-                <input type="checkbox" id="swapPdfCheckbox" name="SwapPdf" style="display:inline-block; width:auto;" />
-                <label for="swapPdfCheckbox" style="display:inline-block;">Swap PDF</label>
-                <div class="swap-pdf-file">
-                    <input type="file" name="Document" class="form-control" accept=".pdf" />
-                </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="swapPdfCheckbox" name="SwapPdf">
+                <label class="form-check-label" for="swapPdfCheckbox">Swap PDF</label>
+            </div>
+            <div id="swapPdfFile" style="display:none;">
+                <input type="file" name="Document" class="form-control mt-2" accept=".pdf" />
             </div>
         }
         else
@@ -87,17 +86,19 @@
             <input type="file" name="Document" class="form-control" accept=".pdf" />
         }
     </div>
-    <style>
-        /* Hide file input unless checkbox is checked */
-        #swapPdfCheckbox:not(:checked) ~ .swap-pdf-file {
-            display: none;
-        }
-        #swapPdfCheckbox:checked ~ .swap-pdf-file {
-            display: block;
-            margin-top: 10px;
-        }
-    </style>
-    <button type="submit" class="btn btn-primary">Save Changes</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var swapCheckbox = document.getElementById('swapPdfCheckbox');
+            var swapFile = document.getElementById('swapPdfFile');
+            if (swapCheckbox) {
+                swapCheckbox.addEventListener('change', function() {
+                    swapFile.style.display = this.checked ? 'block' : 'none';
+                });
+            }
+        });
+    </script>
+    <br /><button type="submit" class="btn btn-primary">Save Changes</button>
     <a asp-action="MonitorCourses" class="btn btn-secondary">Cancel</a>
 </form>
 

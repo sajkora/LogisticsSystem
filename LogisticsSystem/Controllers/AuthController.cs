@@ -27,7 +27,7 @@ namespace LogisticsSystem.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            // Zwracamy widok logowania, przekazując pusty model
+            // Return the login view with an empty model
             return View(new LoginViewModel());
         }
 
@@ -36,7 +36,7 @@ namespace LogisticsSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            // Model binder wiąże dane z form-url-encoded
+            // Model binder binds data from form-url-encoded
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -45,11 +45,11 @@ namespace LogisticsSystem.Controllers
             var user = await _userService.GetUserByEmailAsync(model.Email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
             {
-                ModelState.AddModelError("", "Niepoprawne dane logowania.");
+                ModelState.AddModelError("", "Invalid login credentials.");
                 return View(model);
             }
 
-            // Tworzymy claimy dla tokena
+            // Create claims for the token
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
@@ -71,16 +71,16 @@ namespace LogisticsSystem.Controllers
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            // Ustawiamy ciasteczko "AuthToken"
+            // Set the "AuthToken" cookie
             Response.Cookies.Append("AuthToken", tokenString, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false, // ustaw na false, jeśli testujesz na HTTP (dla HTTPS ustaw true)
+                Secure = false, // set to false for HTTP testing (set to true for HTTPS)
                 Expires = DateTimeOffset.UtcNow.AddMinutes(30),
                 Path = "/"
             });
 
-            // Przekierowujemy użytkownika do strony głównej
+            // Redirect the user to the home page
             return RedirectToAction("Index", "Home");
         }
 
